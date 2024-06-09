@@ -1,8 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tasks List') }}
-        </h2>
+
+
+
+        <div class="flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Tasks List') }}
+            </h2>
+
+            <a href="{{ route('tasks.create') }}"
+                class="bg-emerald-500 py-1 px-3 rounded shadow transition-all hover:bg-emerald-600">
+                Add new
+            </a>
+        </div>
+
     </x-slot>
 
     <div class="py-12">
@@ -72,15 +83,18 @@
                         name: 'duedate'
                     },
                     {
-                        data: function(){
+                        data: function() {
                             return '<div className="bg-blue-700 p-0.5 text-center text-xs font-medium leading-none text-white">Completed</div>'
                         },
                         name: 'status'
                     },
                 ],
                 drawCallback: function() {
-                    $('#tasks-table thead th').addClass('px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider');
-                     $('#tasks-table tbody tr').addClass('bg-white divide-y divide-gray-200 hover:bg-gray-100 cursor-pointer');
+                    $('#tasks-table thead th').addClass(
+                        'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                    );
+                    $('#tasks-table tbody tr').addClass(
+                        'bg-white divide-y divide-gray-200 hover:bg-gray-100 cursor-pointer');
                     $('#tasks-table tbody td').addClass('px-6 py-4 whitespace-wrap');
 
                 }
