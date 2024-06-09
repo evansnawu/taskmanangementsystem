@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
+use App\Traits\TaskQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,7 @@ use Illuminate\View\View;
 
 class TaskController extends Controller
 {
+
     public function __construct(Public TaskService $taskService)
     { }
     /**
@@ -21,7 +23,9 @@ class TaskController extends Controller
     public function index(Request $request): View | JsonResponse
     {
         if ($request->ajax()) {
-            return $this->taskService->populateDatatable();
+            return datatables()::of($this->taskService->taskQuery())
+            ->addIndexColumn()
+            ->make(true);;
         }
         return view('tasks.index');
     }
