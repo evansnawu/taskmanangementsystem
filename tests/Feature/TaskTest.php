@@ -66,3 +66,17 @@ test('create task successfully', function () {
     expect($task['title'])->toBe($lastTask->title)
         ->and($task['description'])->toBe($lastTask->description);
 });
+
+test('task create validation error redirects form with errors', function () {
+
+    $response = actingAs($this->user)->post(
+        '/tasks',
+        [
+            'title' => '',
+            'duedate' => ''
+        ]
+    );
+
+    $response->assertStatus(302)
+        ->assertInvalid(['title', 'duedate']);
+});
