@@ -1,23 +1,16 @@
 <?php
 
-use App\Http\Controllers\TaskController;
 use App\Models\Task;
 use App\Models\User;
-use App\Services\TaskService;
-use Illuminate\Database\Eloquent\Collection;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
-use function Pest\Laravel\getJson;
 use Yajra\DataTables\Facades\DataTables;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    // $this->task = Task::factory()->create();
 });
 
 test('returns view for non ajax request', function () {
-
     actingAs($this->user)
         ->get('/tasks')
         ->assertStatus(200);
@@ -79,4 +72,48 @@ test('task create validation error redirects form with errors', function () {
 
     $response->assertStatus(302)
         ->assertInvalid(['title', 'duedate']);
+});
+
+
+test('task edit contains correct values', function () {
+
+    $task = Task::factory()->create();
+    actingAs($this->user)->get('tasks/' . $task->id . '/edit')
+        ->assertStatus(200)
+        ->assertSee('value="' . $task->name . '"', false)
+        ->assertSee('value="' . $task->price . '"', false)
+        ->assertViewHas('task', $task);
+});
+
+test('task update validation error redirects back to form', function () {
+    $task = Task::factory()->create();
+
+    actingAs($this->user)->put('tasks/' . $task->id, [
+        'title' => '',
+        'duedate' => '',
+        'description' => '',
+        'status' => '',
+        'user_id' => '',
+    ])
+        ->assertStatus(302)
+        ->assertInvalid(['title', 'duedate'])
+        ->assertSessionHasErrors(['title', 'duedate']);
+});
+
+
+test('task edited successfully', function () {
+
+    $task = Task::factory()->create();
+
+    $task->title = 'changed title';
+    $task->status = 1;
+    $task->description = 'description changed';
+    $task->updated_at = date('Y-m-d H:i:s');
+    $task->created_at = date('Y-m-d H:i:s');
+
+    actingAs($this->user)
+        ->put('/tasks/' . $task->id, $task->toArray())
+        ->assertRedirect('tasks');
+
+    $this->assertDatabaseHas('tasks', $task->toArray());
 });
