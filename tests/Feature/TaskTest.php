@@ -117,3 +117,18 @@ test('task edited successfully', function () {
 
     $this->assertDatabaseHas('tasks', $task->toArray());
 });
+
+
+
+
+
+
+test('task show contains correct values', function () {
+
+    $task = Task::factory()->create();
+    actingAs($this->user)->get('tasks/' . $task->id)
+        ->assertStatus(200)
+        ->assertSee($task->title, false)
+        ->assertSee($task->duedate, false)
+        ->assertViewHas('task', $task);
+});
