@@ -114,13 +114,11 @@
                     denyButtonColor: "#d42e12",
                 }).then((result) => {
 
-                    id = urlid(data.id)
-
-                    if (result.isConfirmed) {
-                        window.location.href = `{{ url('tasks/${id}') }}`;
+                       if (result.isConfirmed) {
+                        window.location.href = `{{ url('tasks/${data.id}') }}`;
                     } else if (result.isDenied) {
                         window.location.href =
-                            `{{ url('tasks/${id}/edit') }}`;
+                            `{{ url('tasks/${data.id}/edit') }}`;
                     }
                 })
 
