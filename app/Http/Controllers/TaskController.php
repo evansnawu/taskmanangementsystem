@@ -58,6 +58,13 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
+        if (request()->user()->cannot('view', $task)) {
+            return redirect('/tasks')->with(
+                'error',
+                'User is not authorized to view this task'
+            );
+        }
+
         return view('tasks.show', [
             'task' => $task
         ]);
@@ -74,6 +81,13 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
         try {
+
+            if ($request->user()->cannot('update', $task)) {
+                return redirect('/tasks')->with(
+                    'error',
+                    'User is not authorized to update this task'
+                );
+            }
 
             $this->taskService->update($request->validated(), $task);
 
