@@ -13,7 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    Task::factory()->create();
+    // $this->task = Task::factory()->create();
 });
 
 test('returns view for non ajax request', function () {
@@ -23,7 +23,9 @@ test('returns view for non ajax request', function () {
         ->assertStatus(200);
 });
 
-it('returns JSON response for AJAX request', function () {
+test('returns JSON response for AJAX request', function () {
+
+    $tasks = Task::factory(10)->create();
 
     $tasks = Task::with('user')->get();
     $expected = DataTables::of($tasks)
@@ -37,4 +39,30 @@ it('returns JSON response for AJAX request', function () {
         ->assertJson(json_decode($expected, true));
 });
 
+test('can show create page', function () {
+    $response = $this->actingAs($this->user)->get('/tasks/create');
 
+    $response->assertStatus(200);
+});
+
+test('create task successfully', function () {
+
+    $task = [
+        'title' => 'Title 1',
+        'description' => 'description 1',
+        'duedate' => '2024-10-10',
+        'status' => 1,
+        'user_id' => $this->user->id,
+    ];
+
+    actingAs($this->user)
+        ->post('/tasks', $task)
+        ->assertStatus(302)
+        ->assertRedirect('tasks');
+
+    $this->assertDatabaseHas('tasks', $task);
+
+    $lastTask = Task::latest()->first();
+    expect($task['title'])->toBe($lastTask->title)
+        ->and($task['description'])->toBe($lastTask->description);
+});
