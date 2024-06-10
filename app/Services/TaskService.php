@@ -11,13 +11,22 @@ class TaskService
 
     public function create(array $data): Task
     {
-
-      return  Task::create([
+        return  Task::create([
             'title' => $data['title'],
             'description' => $data['description'],
             'status' => $data['status'],
             'duedate' => $data['duedate'],
             'user_id' => $data['user_id'],
+        ]);
+    }
+
+    public function update(array $data, Task $task): bool
+    {
+        return  $task->update([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'status' => $data['status'],
+            'duedate' => $data['duedate'],
         ]);
     }
 }

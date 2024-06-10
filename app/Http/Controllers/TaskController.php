@@ -7,14 +7,12 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use App\Enums\StatusEnum;
-use App\Traits\TaskQuery;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 
 class TaskController extends Controller
 {
@@ -22,9 +20,7 @@ class TaskController extends Controller
     public function __construct(public TaskService $taskService)
     {
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request): View | JsonResponse
     {
         if ($request->ajax()) {
@@ -35,20 +31,14 @@ class TaskController extends Controller
         return view('tasks.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $task = new Task();
-        $statuses = StatusEnum::cases();
-
-        return view('tasks.create', ['task' => $task, 'statuses' => $statuses]);
+        return view('tasks.create', [
+            'task' => new Task(),
+            'statuses' => array_column(StatusEnum::cases(), 'value')
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreTaskRequest $request)
     {
         try {
@@ -56,40 +46,46 @@ class TaskController extends Controller
             $this->taskService->create($request->validated());
 
             return redirect('/tasks')->with('status', 'Task Successfully Saved');
-
         } catch (Exception $e) {
             Log::debug($e->getMessage());
-            return redirect('/tasks')->with('error', 'An error has occured whilst saving task, please try again');
+            return redirect('/tasks')->with(
+                'error',
+                'An error has occured whilst saving task, please try again'
+            );
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Task $task)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Task $task)
     {
-        //
+        return view('tasks.edit', [
+            'task' => $task,
+            'statuses' => array_column(StatusEnum::cases(), 'value')
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
-        //
+        try {
+
+            $this->taskService->update($request->validated(), $task);
+
+            return redirect('/tasks')->with('status', 'Task Successfully Saved');
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
+            return redirect('/tasks')->with(
+                'error',
+                'An error has occured whilst saving task, please try again'
+            );
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Task $task)
     {
         //
