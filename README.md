@@ -27,6 +27,8 @@ Next you need to make a copy of the `.env.example` file and rename it to `.env` 
 Run the following command to generate your app key:
 
 ```
+Change as per your db credentials in .env
+
 php artisan migrate --seed
 ```
 
