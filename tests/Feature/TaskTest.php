@@ -47,7 +47,7 @@ test('create task successfully', function () {
         'title' => 'Title 1',
         'description' => 'description 1',
         'duedate' => '2024-10-10',
-        'status' => 1,
+        'status' => StatusEnum::In_Progress->value,
         'user_id' => $this->user->id,
     ];
 
@@ -131,12 +131,13 @@ test('task edited successfully', function () {
         'user_id' => $this->user->id
     ]);
 
-    $task->title = 'changed title';
-    $task->status = 1;
+    $task->title = "changed title";
+    $task->status = StatusEnum::Completed->value;
     $task->description = 'description changed';
+    $task->duedate = '2026-01-30';
 
      actingAs($this->user)
-        ->put('/tasks/' . $task->id, $task->toArray())
+        ->put(url('tasks' , $task->id), $task->toArray())
         ->assertStatus(302);
 
     $this->assertDatabaseHas('tasks', $task->toArray());
@@ -159,17 +160,18 @@ test('task completion fires events', function () {
 
     Event::fake();
 
-    $task = Task::factory([
+    $task = Task::factory()->create([
         'user_id' => $this->user->id,
-        'status' => 'In Progress'
-    ])->create();
+        'status' => StatusEnum::Pending->value,
+    ]);
 
-    $task->title = 'changed title';
-    $task->status = 2;
+    $task->title = "changed title";
+    $task->status = StatusEnum::Completed->value;
     $task->description = 'description changed';
+    $task->duedate = '2026-01-30';
 
-    actingAs($this->user)
-        ->put('/tasks/' . $task->id, $task->toArray())
+     actingAs($this->user)
+        ->put(url('tasks' , $task->id), $task->toArray())
         ->assertStatus(302);
 
     Event::assertDispatched(TaskCompleted::class);
