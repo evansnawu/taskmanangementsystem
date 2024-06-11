@@ -129,9 +129,10 @@
                     icon: 'info',
                     showDenyButton: true,
                     showCancelButton: true,
-                    confirmButtonText: "View Details",
-                    denyButtonText: "Make Changes",
-                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "View or Delete Task",
+                    denyButtonText: "Edit Task",
+                        confirmButtonColor: "#3085d6",
+                    denyButtonColor: "#000",
                     denyButtonColor: "#d42e12",
                 }).then((result) => {
 

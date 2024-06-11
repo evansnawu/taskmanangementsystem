@@ -104,6 +104,25 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
-        //
+        try {
+
+            if (request()->user()->cannot('delete', $task)) {
+                return redirect('/tasks')->with(
+                    'error',
+                    'User is not authorized to delete this task'
+                );
+            }
+
+
+            $this->taskService->delete($task);
+
+            return redirect('/tasks')->with('status', 'Task Successfully Deleted');
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
+            return redirect('/tasks')->with(
+                'error',
+                'An error has occured whilst saving task, please try again'
+            );
+        }
     }
 }

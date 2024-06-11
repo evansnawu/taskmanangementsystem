@@ -29,4 +29,9 @@ class TaskService
             'duedate' => $data['duedate'],
         ]);
     }
+
+    public function delete(Task $task): bool
+    {
+        return $task->delete();
+    }
 }
