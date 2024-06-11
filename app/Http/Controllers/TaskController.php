@@ -26,7 +26,7 @@ class TaskController extends Controller
         if ($request->ajax()) {
             return datatables()::of($this->taskService->taskQuery())
                 ->addIndexColumn()
-                ->make(true);;
+                ->make(true);
         }
         return view('tasks.index');
     }
