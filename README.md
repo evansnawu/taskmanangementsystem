@@ -6,7 +6,7 @@ This comprehensive task management system empowers users to efficiently manage t
 
 ### Launch the Task Management System
 
-_(Assuming you've [installed Laravel](https://laravel.com/docs/11.x))_
+_(Assuming you've [installed composer](https://laravel.com/docs/11.x),[node](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs),[php8.2](https://www.php.net/manual/en/install.php), [mysql](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/))_
 
 Clone this repository, 
 ```bash
@@ -25,6 +25,10 @@ npm install
 Next you need to make a copy of the `.env.example` file and rename it to `.env` inside your project root.
 
 Run the following command to generate your app key:
+
+```
+php artisan migrate --seed
+```
 
 ```
 php artisan key:generate
