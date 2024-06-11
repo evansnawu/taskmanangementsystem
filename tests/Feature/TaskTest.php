@@ -101,6 +101,21 @@ test('task update validation error redirects back to form', function () {
 });
 
 
+test('task delete successful', function () {
+    $task = Task::factory()->create();
+
+    actingAs($this->user)
+        ->delete('tasks/' . $task->id)
+        ->assertStatus(302)
+        ->assertRedirect('tasks');
+
+    $this->assertDatabaseMissing('tasks', $task->toArray());
+    $this->assertDatabaseCount('tasks', 0);
+
+    $this->assertModelMissing($task);
+    $this->assertDatabaseEmpty('tasks');
+});
+
 test('task edited successfully', function () {
 
     $task = Task::factory()->create();
