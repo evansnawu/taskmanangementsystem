@@ -1,12 +1,12 @@
-# Laravel starter
+# Task Management System
 
-This is a task management system. That allows a user to create, update, delete and view only theirs tasks. It sends email notifications when a task has been completed
+This comprehensive task management system empowers users to efficiently manage their personal tasks. It provides the functionality to create, update, delete, and view tasks exclusively assigned to them. Additionally, the system ensures timely communication by sending email notifications upon the completion of tasks. It is designed to enhance productivity and streamline task tracking, making it an invaluable tool for both personal and professional use.
 
 ## Getting started
 
-### Launch the starter project
+### Launch the Task Management System
 
-_(Assuming you've [installed Laravel](https://laravel.com/docs/11/installation))_
+_(Assuming you've [installed Laravel](https://laravel.com/docs/11.x))_
 
 Clone this repository, 
 ```bash
@@ -19,7 +19,7 @@ composer install
 ```
 
 ```bash
-npm run install
+npm install
 ```
 
 Next you need to make a copy of the `.env.example` file and rename it to `.env` inside your project root.
@@ -34,11 +34,13 @@ Then start your server:
 
 ```
 php artisan serve
+
+npm run dev
 ```
 
 Your Laravel starter project is now up and running!
 
-### Configure the starter project
+### Configure the Task Management System Emails
 
 Insert you mailing server credentials to send email in .env:
 
