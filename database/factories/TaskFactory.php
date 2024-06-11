@@ -20,11 +20,11 @@ class TaskFactory extends Factory
         $arrayValues = ['Pending', 'In Progress', 'Completed'];
 
         return [
-           'title'=>fake()->title(),
-           'description'=>fake()->paragraph(),
-           'duedate'=>fake()->date(),
-           'status'=>$arrayValues[rand(0,2)],
-           'user_id'=>User::factory()->create()->id,
+            'title' => fake()->sentence(4),
+            'description' => fake()->paragraph(),
+            'duedate' => fake()->date(),
+            'status' => $arrayValues[rand(0, 2)],
+            'user_id' => User::factory()->create()->id,
         ];
     }
 }
