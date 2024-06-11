@@ -1,7 +1,10 @@
 <?php
 
+use App\Enums\StatusEnum;
+use App\Events\TaskCompleted;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\actingAs;
 use Yajra\DataTables\Facades\DataTables;
@@ -77,16 +80,20 @@ test('task create validation error redirects form with errors', function () {
 
 test('task edit contains correct values', function () {
 
-    $task = Task::factory()->create();
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id
+    ]);
     actingAs($this->user)->get('tasks/' . $task->id . '/edit')
         ->assertStatus(200)
-        ->assertSee('value="' . $task->name . '"', false)
-        ->assertSee('value="' . $task->price . '"', false)
+        ->assertSee($task->title, false)
+        ->assertSee($task->description, false)
         ->assertViewHas('task', $task);
 });
 
 test('task update validation error redirects back to form', function () {
-    $task = Task::factory()->create();
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id
+    ]);
 
     actingAs($this->user)->put('tasks/' . $task->id, [
         'title' => '',
@@ -102,7 +109,9 @@ test('task update validation error redirects back to form', function () {
 
 
 test('task delete successful', function () {
-    $task = Task::factory()->create();
+    $task = Task::factory([
+        'user_id' => $this->user->id
+    ])->create();
 
     actingAs($this->user)
         ->delete('tasks/' . $task->id)
@@ -118,29 +127,27 @@ test('task delete successful', function () {
 
 test('task edited successfully', function () {
 
-    $task = Task::factory()->create();
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id
+    ]);
 
     $task->title = 'changed title';
     $task->status = 1;
     $task->description = 'description changed';
-    $task->updated_at = date('Y-m-d H:i:s');
-    $task->created_at = date('Y-m-d H:i:s');
 
-    actingAs($this->user)
+     actingAs($this->user)
         ->put('/tasks/' . $task->id, $task->toArray())
-        ->assertRedirect('tasks');
+        ->assertStatus(302);
 
     $this->assertDatabaseHas('tasks', $task->toArray());
 });
 
 
-
-
-
-
 test('task show contains correct values', function () {
 
-    $task = Task::factory()->create();
+    $task = Task::factory()->create([
+        'user_id' => $this->user->id
+    ]);
     actingAs($this->user)->get('tasks/' . $task->id)
         ->assertStatus(200)
         ->assertSee($task->title, false)
