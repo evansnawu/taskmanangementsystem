@@ -33,13 +33,14 @@ class TaskController extends Controller
 
     public function create()
     {
+
         return view('tasks.create', [
             'task' => new Task(),
             'statuses' => array_column(StatusEnum::cases(), 'value')
         ]);
     }
 
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request): RedirectResponse
     {
         try {
 
@@ -55,7 +56,6 @@ class TaskController extends Controller
         }
     }
 
-
     public function show(Task $task)
     {
         if (request()->user()->cannot('view', $task)) {
@@ -70,7 +70,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function edit(Task $task)
+    public function edit(Task $task): View
     {
         return view('tasks.edit', [
             'task' => $task,
@@ -102,7 +102,7 @@ class TaskController extends Controller
     }
 
 
-    public function destroy(Task $task)
+    public function destroy(Task $task): RedirectResponse
     {
         try {
 
