@@ -39,3 +39,27 @@ test('users can logout', function () {
     $this->assertGuest();
     $response->assertRedirect('/');
 });
+
+
+test('unauthenticated user cannot access task', function () {
+
+    $response = $this->get('/tasks');
+
+    $response->assertStatus(302)
+        ->assertRedirect('login');
+});
+
+test('login redirects to tasks', function () {
+    User::create([
+        'name' => 'User',
+        'email' => 'user@user.com',
+        'password' => bcrypt('password123')
+    ]);
+
+    post('/login', [
+        'email' => 'user@user.com',
+        'password' => 'password123'
+    ])
+        ->assertStatus(302)
+        ->assertRedirect('tasks');
+});
