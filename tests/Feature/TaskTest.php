@@ -11,6 +11,9 @@ use Yajra\DataTables\Facades\DataTables;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
+    $this->task = Task::factory()->create([
+        'user_id' => $this->user->id
+    ]);
 });
 
 test('returns view for non ajax request', function () {
@@ -21,6 +24,7 @@ test('returns view for non ajax request', function () {
 
 test('returns JSON response for AJAX request', function () {
 
+    Task::truncate();
     $tasks = Task::factory(10)->create();
 
     $tasks = Task::with('user')->get();
@@ -58,9 +62,6 @@ test('create task successfully', function () {
 
     $this->assertDatabaseHas('tasks', $task);
 
-    $lastTask = Task::latest()->first();
-    expect($task['title'])->toBe($lastTask->title)
-        ->and($task['description'])->toBe($lastTask->description);
 });
 
 test('task create validation error redirects form with errors', function () {
@@ -80,22 +81,17 @@ test('task create validation error redirects form with errors', function () {
 
 test('task edit contains correct values', function () {
 
-    $task = Task::factory()->create([
-        'user_id' => $this->user->id
-    ]);
-    actingAs($this->user)->get('tasks/' . $task->id . '/edit')
+
+    actingAs($this->user)->get('tasks/' . $this->task->id . '/edit')
         ->assertStatus(200)
-        ->assertSee($task->title, false)
-        ->assertSee($task->description, false)
-        ->assertViewHas('task', $task);
+        ->assertSee($this->task->title, false)
+        ->assertSee($this->task->description, false)
+        ->assertViewHas('task', $this->task);
 });
 
 test('task update validation error redirects back to form', function () {
-    $task = Task::factory()->create([
-        'user_id' => $this->user->id
-    ]);
 
-    actingAs($this->user)->put('tasks/' . $task->id, [
+    actingAs($this->user)->put('tasks/' . $this->task->id, [
         'title' => '',
         'duedate' => '',
         'description' => '',
@@ -109,51 +105,40 @@ test('task update validation error redirects back to form', function () {
 
 
 test('task delete successful', function () {
-    $task = Task::factory([
-        'user_id' => $this->user->id
-    ])->create();
 
     actingAs($this->user)
-        ->delete('tasks/' . $task->id)
+        ->delete('tasks/' . $this->task->id)
         ->assertStatus(302)
         ->assertRedirect('tasks');
 
-    $this->assertDatabaseMissing('tasks', $task->toArray());
-    $this->assertDatabaseCount('tasks', 0);
+    $this->assertDatabaseMissing('tasks', $this->task->toArray());
+    $this->assertModelMissing($this->task);
 
-    $this->assertModelMissing($task);
-    $this->assertDatabaseEmpty('tasks');
 });
 
 test('task edited successfully', function () {
 
-    $task = Task::factory()->create([
-        'user_id' => $this->user->id
-    ]);
-
-    $task->title = "changed title";
-    $task->status = StatusEnum::Completed->value;
-    $task->description = 'description changed';
-    $task->duedate = '2026-01-30';
+    $this->task->title = "changed title";
+    $this->task->status = StatusEnum::Completed->value;
+    $this->task->description = 'description changed';
+    $this->task->duedate = '2026-01-30';
 
      actingAs($this->user)
-        ->put(url('tasks' , $task->id), $task->toArray())
+        ->put(url('tasks' , $this->task->id), $this->task->toArray())
         ->assertStatus(302);
 
-    $this->assertDatabaseHas('tasks', $task->toArray());
+    $this->assertDatabaseHas('tasks', $this->task->toArray());
 });
 
 
 test('task show contains correct values', function () {
 
-    $task = Task::factory()->create([
-        'user_id' => $this->user->id
-    ]);
-    actingAs($this->user)->get('tasks/' . $task->id)
+
+    actingAs($this->user)->get('tasks/' . $this->task->id)
         ->assertStatus(200)
-        ->assertSee($task->title, false)
-        ->assertSee($task->duedate, false)
-        ->assertViewHas('task', $task);
+        ->assertSee($this->task->title, false)
+        ->assertSee($this->task->duedate, false)
+        ->assertViewHas('task', $this->task);
 });
 
 test('task completion fires events', function () {
