@@ -68,8 +68,20 @@ MAIL_FROM_ADDRESS=xxxxxxxxx
 MAIL_FROM_NAME="${APP_NAME}"
 
 ```
-The run the following command to queued emails:
+The run the following command to run queued emails:
 
 ```
 php artisan queue:work
+```
+
+
+The run the following command to run test ensure db connection and correct mail smpt credentials before running tests:
+
+```
+ php artisan optimize:clear
+
+ then
+
+php artisan test
+
 ```
