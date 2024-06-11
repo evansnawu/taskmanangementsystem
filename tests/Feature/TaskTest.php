@@ -147,3 +147,23 @@ test('task show contains correct values', function () {
         ->assertSee($task->duedate, false)
         ->assertViewHas('task', $task);
 });
+
+test('task completion fires events', function () {
+
+    Event::fake();
+
+    $task = Task::factory([
+        'user_id' => $this->user->id,
+        'status' => 'In Progress'
+    ])->create();
+
+    $task->title = 'changed title';
+    $task->status = 2;
+    $task->description = 'description changed';
+
+    actingAs($this->user)
+        ->put('/tasks/' . $task->id, $task->toArray())
+        ->assertStatus(302);
+
+    Event::assertDispatched(TaskCompleted::class);
+});
