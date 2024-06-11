@@ -35,7 +35,16 @@
                 },
                 {
                     data: function(data) {
-                        return data.status
+
+                        let updatecolor = ''
+                        if (data.status == 'Completed') {
+                            updatecolor = 'bg-green-500'
+                        } else if (data.status == 'Pending') {
+                            updatecolor = 'bg-red-500'
+                        } else {
+                            updatecolor = 'bg-orange-500'
+                        }
+                        return ` <span class="${updatecolor} p-1 px-3 text-white rounded">${data.status}</span>`
                     },
                     name: 'status'
                 },
@@ -49,9 +58,10 @@
 
                         // Create input element
                         let input = document.createElement('input');
-                        input.placeholder = 'Search '+title.toString().trim();
+                        input.placeholder = 'Search ' + title.toString().trim();
                         input.id = title;
-                        input.className = "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full";
+                        input.className =
+                            "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full";
                         column.header().replaceChildren(input);
 
                         // Event listener for user input
@@ -83,7 +93,7 @@
                 showCancelButton: true,
                 confirmButtonText: "View or Delete Task",
                 denyButtonText: "Edit Task",
-                    confirmButtonColor: "#3085d6",
+                confirmButtonColor: "#3085d6",
                 denyButtonColor: "#000",
                 denyButtonColor: "#d42e12",
             }).then((result) => {
